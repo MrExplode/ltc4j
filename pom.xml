@@ -23,19 +23,6 @@
         </configuration>
       </plugin>
       
-      <!-- Maven Shade -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.1</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals><goal>shade</goal></goals>
-          </execution>
-        </executions>
-      </plugin>
-      
       <!-- Maven Jar -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
