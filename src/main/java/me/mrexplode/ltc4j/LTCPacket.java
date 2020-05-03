@@ -1,5 +1,7 @@
 package me.mrexplode.ltc4j;
 
+import java.util.Arrays;
+
 /**
  * This class represents one packet of LTC data.
  * 
@@ -156,7 +158,8 @@ public class LTCPacket {
         String[] bits = asStringBits().split("(?<=\\G.{8})");
         byte[] result = new byte[bits.length];
         for (int i = 0; i < bits.length; i++) {
-            result[i] = Byte.parseByte(bits[i], 2);
+            Integer integer = Integer.parseInt(bits[i], 2);
+            result[i] = integer.byteValue();
         }
         return result;
     }
