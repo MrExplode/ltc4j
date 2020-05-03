@@ -95,6 +95,22 @@ public class LTCPacket {
 		data[framerate == Framerate.FRAMERATE_25 ? 59 : 27] = getPolarity(data);
 		return manchesterEncode(data);
 	}
+	/**
+	 * @return The packet, correctly <a href=
+	 *         "https://en.wikipedia.org/wiki/Linear_timecode#Longitudinal_timecode_data_format">
+	 *         formatted</a>, encoded with <a href=
+	 *         "https://en.wikipedia.org/wiki/Differential_Manchester_encoding">
+	 *         differential manchester encoding</a> and rappresented as a bitString.
+	 */
+	public String asStringBits(){
+		byte[] data = asByteArray();
+		StringBuilder sb = new StringBuilder(data.length * 8);
+		for(byte b : data){
+			String s = Integer.toBinaryString(b);
+			sb.append(String.format("%8s", s.length() > 8 ? s.substring(s.length() - 8, s.length()) : s).replace(' ', '0'));
+		}
+		return sb.toString();
+	}
 
 	private int buildBlock(boolean[] data, int index, int value, boolean longValue, boolean flag1, boolean flag2) {
 		int optionalBit = longValue ? 1 : 0;
@@ -125,7 +141,7 @@ public class LTCPacket {
 	}
 
 	private static byte[] manchesterEncode(boolean value[]) {
-		ByteBuilder result = new ByteBuilder(value.length);
+		ByteBuilder result = new ByteBuilder(value.length * 2);
 		for (boolean b : value) {
 			if (b) {
 				result.add(true);
@@ -139,8 +155,8 @@ public class LTCPacket {
 	}
 
 	private static int bcdSingle(boolean[] b, int index, int value) {
-		while (value > 0 && index >= 0) {
-			b[index--] = value % 2 == 1;
+		while (value > 0 && index < b.length) {
+			b[index++] = value % 2 == 1;
 			value /= 2;
 		}
 		return index;
@@ -148,10 +164,16 @@ public class LTCPacket {
 
 	private static boolean[] bcd(int value, int numBits) {
 		boolean[] result = new boolean[numBits];
-		int i = numBits - 1;
-		bcdSingle(result, i, value % 10);
-		bcdSingle(result, i - 4, value / 10);
+		bcdSingle(result, 0, value % 10);
+		bcdSingle(result, 4, value / 10);
 		return result;
+	}
+	
+	@SuppressWarnings("unused")
+	private static void printData(boolean[] data){
+		for(int i = 0; i < data.length; i++)
+			System.out.print((data[i] ? '1' : '0') + (i % 4 == 3 ? " " : ""));
+		System.out.println();
 	}
 
 	private static int addAll(boolean[] dst, int index, boolean[] src) {
