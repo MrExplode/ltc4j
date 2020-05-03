@@ -1,6 +1,11 @@
 package me.mrexplode.ltc4j;
 
-
+/**
+ * This class represents one packet of LTC data.
+ * 
+ * @author <a href="https://github.com/mrexplode">MrExplode</a>
+ *
+ */
 public class LTCPacket {
     
     private final String SYNC_WORD = "0011111111111101";
@@ -16,10 +21,34 @@ public class LTCPacket {
     private boolean sync;
     private boolean reversed;
     
+    /**
+     * Constructs a packet from the given parameters.<br>
+     * All extra ltc parameters are set to false.
+     * 
+     * @param hour
+     * @param min
+     * @param sec
+     * @param frame
+     * @param framerate
+     */
     public LTCPacket(int hour, int min, int sec, int frame, Framerate framerate) {
         this(hour, min, sec, frame, framerate, framerate.equals(Framerate.FRAMERATE_DROPFRAME) ? true : false, false, false, false);
     }
     
+    /**
+     * Constructs a packet from the given parameters.<br>
+     * More info about flags can be found <a href="https://en.wikipedia.org/wiki/Linear_timecode#Longitudinal_timecode_data_format">here</a>.
+     * 
+     * @param hour number
+     * @param min number
+     * @param sec number
+     * @param frame number
+     * @param framerate the framerate
+     * @param df drop frame flag
+     * @param col color frame flag
+     * @param sync clock synced frame flag
+     * @param reversed should be true when you are playing timecode backwards
+     */
     public LTCPacket(int hour, int min, int sec, int frame, Framerate framerate, boolean df, boolean col, boolean sync, boolean reversed) {
         this.hour = hour;
         this.min = min;
@@ -32,6 +61,11 @@ public class LTCPacket {
         this.reversed = reversed;
     }
 
+    /**
+     * 
+     * @return The packet, correctly <a href="https://en.wikipedia.org/wiki/Linear_timecode#Longitudinal_timecode_data_format">formatted</a>,
+     *  and encoded with <a href="https://en.wikipedia.org/wiki/Differential_Manchester_encoding">differential manchester encoding</a>.
+     */
     public String asStringBits() {
         StringBuilder builder = new StringBuilder();
         String[] frames = bcdSmall(this.frame);
@@ -114,6 +148,10 @@ public class LTCPacket {
         return manchesterEncode(builder.toString());
     }
     
+    /**
+     * 
+     * @return the packet encoded into bytes
+     */
     public byte[] asByteArray() {
         String[] bits = asStringBits().split("(?<=\\G.{8})");
         byte[] result = new byte[bits.length];

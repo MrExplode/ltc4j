@@ -24,7 +24,7 @@ public class LTCGenerator implements Runnable {
     private boolean running = true;
     private boolean playing = false;
     
-    public LTCGenerator(Mixer output, Framerate framerate, int channels) {
+    public LTCGenerator(Mixer output, Framerate framerate) {
         this.framerate = framerate;
         this.mixer = output;
     }
