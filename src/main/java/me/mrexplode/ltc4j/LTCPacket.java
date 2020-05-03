@@ -164,7 +164,7 @@ public class LTCPacket {
     private static String manchesterEncode(String value) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < value.length(); i++) {
-            char c = result.charAt(i);
+            char c = value.charAt(i);
             if (c == '0') {
                 result.append("01");
             } else {
