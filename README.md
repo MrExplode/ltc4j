@@ -5,6 +5,7 @@ SMPTE LTC signal generator for Java
 **Disclaimer:** At this moment, doesn't work
 
 This library focuses on generating ltc signals. This implies that you have to handle the timing, but also this makes slowing and accerlating time possible.
+Huge thanks to [@stranck](https://github.com/stranck) for reformatting the LTCPacket class!
 ## Usage
  Framerates:
   - `Framerate.FRAMERATE_24`
@@ -38,6 +39,7 @@ long time = 0;
 int framerate = ... // your framerate
 LTCGenerator generator = ... // the generator instance
 while (System.currentTimeMillis() >= time + (1000 / framerate) {
+    time = System.currentTimeMillis();
     long elapsed = time - start;
     long var = elapsed;
     int hour = (int) (var / 60 / 60 / 1000);
