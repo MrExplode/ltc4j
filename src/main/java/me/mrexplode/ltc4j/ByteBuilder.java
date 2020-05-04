@@ -1,4 +1,4 @@
-package ovh.stranck.ltc4j;
+package me.mrexplode.ltc4j;
 
 /**
  * This class helps trasforming a boolean array of bits into a byte array.
