@@ -6,7 +6,7 @@ package me.mrexplode.ltc4j;
  * @author <a href="https://www.stranck.ovh">Stranck</a> and <a href="https://github.com/mrexplode">MrExplode</a>
  *
  */
-public class LTCPacket2 {
+public class LTCPacket {
     
     private final boolean[] SYNC_WORD = convertBitString("0011111111111101");
     
@@ -30,15 +30,13 @@ public class LTCPacket2 {
      * @param frame
      * @param framerate
      */
-    public LTCPacket2(int hour, int min, int sec, int frame, Framerate framerate) {
+    public LTCPacket(int hour, int min, int sec, int frame, Framerate framerate) {
         this(hour, min, sec, frame, framerate, framerate.equals(Framerate.FRAMERATE_DROPFRAME) ? true : false, false, false, false);
     }
 
     /**
      * Constructs a packet from the given parameters.<br>
-     * More info about flags can be found <a href=
-     * "https://en.wikipedia.org/wiki/Linear_timecode#Longitudinal_timecode_data_format">
-     * here</a>.
+     * More info about flags can be found <a href="https://en.wikipedia.org/wiki/Linear_timecode#Longitudinal_timecode_data_format">here</a>.
      * 
      * @param hour
      * @param min
@@ -50,7 +48,7 @@ public class LTCPacket2 {
      * @param sync clock synced frame flag
      * @param reversed should be true when you are playing timecode backwards
      */
-    public LTCPacket2(int hour, int min, int sec, int frame, Framerate framerate, boolean df, boolean col, boolean sync, boolean reversed) {
+    public LTCPacket(int hour, int min, int sec, int frame, Framerate framerate, boolean df, boolean col, boolean sync, boolean reversed) {
         this.hour = hour;
         this.min = min;
         this.sec = sec;
@@ -84,7 +82,12 @@ public class LTCPacket2 {
         index = addAllBits(data, index, userBits2);
         return index;
     }
-    public boolean[] asBooleanArray(){
+    
+    /**
+     * 
+     * @return The packet data as a boolean array, without encoding.
+     */
+    public boolean[] asBooleanArray() {
         boolean data[] = new boolean[80];
         int index = 0;
         index = buildBlock(data, index, frame, false, df, col, userbits[0], userbits[1]);
@@ -98,16 +101,28 @@ public class LTCPacket2 {
         //if(framerate == Framerate.FRAMERATE_DROPFRAME) data[10] = 
         return data;
     }
-    public byte[] asAudioSample(int sampleRate){
+    
+    /**
+     * 
+     * @param sampleRate
+     * @return The packet data as an audio sample, encoded and expanded to fit the sample rate
+     */
+    public byte[] asAudioSample(int sampleRate) {
         return manchesterEncode(asBooleanArray(), getBitExpansion(sampleRate));
     }
     
-    
+    /**
+     * Returns the data encoded with <a href="https://en.wikipedia.org/wiki/Differential_Manchester_encoding">differential manchester encoding</a>, without bit expansion
+     * @return data in byte array
+     */
     public byte[] asByteArray() {
         return manchesterEncode(asBooleanArray(), 1);
     }
     
-    
+    /**
+     * Returns the data converted into a string that consits of "1"s and "0"s representing bits
+     * @return data in bitstring
+     */
     public String asBitsString(){
         boolean[] data = asBooleanArray();
         StringBuilder sb = new StringBuilder(data.length * 8);
@@ -122,6 +137,11 @@ public class LTCPacket2 {
         return 160 * getBitExpansion((Integer) o);
     }
     
+    /**
+     * Returns the amount of bit expansion needed for the specified sample rate, with the current framerate.
+     * @param sampleRate
+     * @return bit expansion value
+     */
     private int getBitExpansion(int sampleRate){
         return (int) (sampleRate / (160 * framerate.getFps()));
     }
@@ -145,14 +165,29 @@ public class LTCPacket2 {
         return result;
     }
     
+    /**
+     * 
+     * @param block the index of the userbits
+     * @return the userbits at the index, in boolean array
+     */
     public boolean[] getUserBits(int block){
         return userbits[block];
     }
     
+    /**
+     * Sets the specified userbits field to the given value.
+     * @param bits the data, in bitString, that will be converted to boolean array
+     * @param block index of the userbits field
+     */
     public void setUserbits(String bits, int block){
         userbits[block] = convertBitString(bits);
     }
     
+    /**
+     * Sets the specified userbits field to the given value.
+     * @param bits the data, in boolean array
+     * @param block index of the userbits field
+     */
     public void setUserbits(boolean[] bits, int block){
         userbits[block] = bits;
     }
@@ -161,6 +196,13 @@ public class LTCPacket2 {
         return bgf0;
     }
     
+    /**
+     * Sets the binary group flag 0 to the given value.<br>
+     * The combination of BGF0 and BGF2 indicates the data format of the user bits.
+     * The combinations are reserved.
+     * 
+     * @param bgf0 binary group flag 0 value
+     */
     public void setBgf0(boolean bgf0) {
         this.bgf0 = bgf0;
     }
@@ -169,13 +211,33 @@ public class LTCPacket2 {
         return bgf2;
     }
     
+    /**
+     * Sets the binary group flag 2 to the given value.<br>
+     * The combination of BGF0 and BGF2 indicates the data format of the user bits.
+     * The combinations are reserved.
+     * 
+     * @param bgf2 binary group flag 2 value
+     */
     public void setBgf2(boolean bgf2) {
         this.bgf2 = bgf2;
     }
     
+    /**
+     * Sets the amplitude of the signal.
+     * If you wish to have more control beyond this, you should use the {@link javax.sound.sampled.DataLine#getControl(javax.sound.sampled.Control.Type)} 
+     * with {@link javax.sound.sampled.FloatControl.Type#MASTER_GAIN}
+     * 
+     * @param volume The value, range from 0 to 100.
+     */
     public void setVolumePercent(int volume){
         this.volume = (byte) (Byte.MAX_VALUE * volume / 100);
     }
+    
+    
+    ////////////////////////////
+    //     Helper methods     //
+    ////////////////////////////
+    
     
     private static int repeatBytes(byte data[], int index, byte value, int repeatBytes){
         for(int i = 0; i < repeatBytes; i++)

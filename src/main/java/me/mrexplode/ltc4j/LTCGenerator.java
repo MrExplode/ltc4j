@@ -38,7 +38,7 @@ public class LTCGenerator implements Runnable {
         
         dataLine.start();
         while (running) {
-            LTCPacket2 packet = new LTCPacket2(hour, min, sec, frame, framerate, dropframe, colorframe, synced, reversed);
+            LTCPacket packet = new LTCPacket(hour, min, sec, frame, framerate, dropframe, colorframe, synced, reversed);
             packet.setVolumePercent(volume);
             byte[] content = packet.asAudioSample(sampleRate);
             if (playing)
