@@ -2,10 +2,11 @@
 
 SMPTE LTC signal generator for Java
 
-**Disclaimer:** At this moment, doesn't work
+**Disclaimer:** At this moment, doesn't work properly
 
 This library focuses on generating ltc signals. This implies that you have to handle the timing, but also this makes slowing and accerlating time possible.
-Huge thanks to [@stranck](https://github.com/stranck) for reformatting the LTCPacket class!
+
+If you want a complete library for sending various types of timecode, check out [this](https://github.com/stranck/JavaTimecode), made by [@stranck](https://github.com/stranck)
 ## Usage
  Framerates:
   - `Framerate.FRAMERATE_24`
@@ -17,7 +18,8 @@ Huge thanks to [@stranck](https://github.com/stranck) for reformatting the LTCPa
 ```java
 int hour, min, sec, frame = ... // times
 Mixer mixer = ... // your output
-LTCGenerator generator = new LTCGenerator(mixer, Framerate.FRAMERATE_25);
+int sampleRate = 44100; //audio sample rate
+LTCGenerator generator = new LTCGenerator(mixer, Framerate.FRAMERATE_25, sampleRate);
 generator.init(); // handle the exception
 // by calling start method, the generator will begin playing timecode
 generator.start();
@@ -33,13 +35,13 @@ byte[] data = packet.asByteArray();
 // work with data
 ```
 **An example of timing**
+With this example you can get a precise timing, that calculates time values from elapsed time, therefore not relying on perfectly on-time loops.
 ```java
 long start = 0;
 long time = 0;
 int framerate = ... // your framerate
 LTCGenerator generator = ... // the generator instance
 while (System.currentTimeMillis() >= time + (1000 / framerate) {
-    time = System.currentTimeMillis();
     long elapsed = time - start;
     long var = elapsed;
     int hour = (int) (var / 60 / 60 / 1000);
