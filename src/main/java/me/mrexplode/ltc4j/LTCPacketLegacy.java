@@ -6,7 +6,8 @@ package me.mrexplode.ltc4j;
  * @author <a href="https://github.com/mrexplode">MrExplode</a> and <a href="https://www.stranck.ovh">Stranck</a>
  *
  */
-public class LTCPacket {
+@SuppressWarnings("all")
+public class LTCPacketLegacy {
 
 	private static final String SYNC_WORD_STR = "0011111111111101";
 	private static final boolean[] SYNC_WORD = convertBitString(SYNC_WORD_STR);
@@ -22,6 +23,7 @@ public class LTCPacket {
 	private boolean col;
 	private boolean sync;
 	private boolean reversed;
+	private byte volume;
 
 	/**
 	 * Constructs a packet from the given parameters.<br>
@@ -33,9 +35,8 @@ public class LTCPacket {
 	 * @param frame
 	 * @param framerate
 	 */
-	public LTCPacket(int hour, int min, int sec, int frame, Framerate framerate) {
-		this(hour, min, sec, frame, framerate, framerate.equals(Framerate.FRAMERATE_DROPFRAME) ? true : false, false,
-				false, false);
+	public LTCPacketLegacy(int hour, int min, int sec, int frame, Framerate framerate) {
+		this(hour, min, sec, frame, framerate, framerate.equals(Framerate.FRAMERATE_DROPFRAME) ? true : false, false, false, false);
 	}
 
 	/**
@@ -45,26 +46,16 @@ public class LTCPacket {
 	 * here</a>.
 	 * 
 	 * @param hour
-	 *            number
 	 * @param min
-	 *            number
 	 * @param sec
-	 *            number
 	 * @param frame
-	 *            number
-	 * @param framerate
-	 *            the framerate
-	 * @param df
-	 *            drop frame flag
-	 * @param col
-	 *            color frame flag
-	 * @param sync
-	 *            clock synced frame flag
-	 * @param reversed
-	 *            should be true when you are playing timecode backwards
+	 * @param framerate the framerate
+	 * @param df drop frame flag
+	 * @param col color frame flag
+	 * @param sync clock synced frame flag
+	 * @param reversed should be true when you are playing timecode backwards
 	 */
-	public LTCPacket(int hour, int min, int sec, int frame, Framerate framerate, boolean df, boolean col, boolean sync,
-			boolean reversed) {
+	public LTCPacketLegacy(int hour, int min, int sec, int frame, Framerate framerate, boolean df, boolean col, boolean sync, boolean reversed) {
 		this.hour = hour;
 		this.min = min;
 		this.sec = sec;
@@ -75,41 +66,55 @@ public class LTCPacket {
 		this.sync = sync;
 		this.reversed = reversed;
 	}
+	
+	public void setVolumePercent(int volume) {
+	    this.volume = (byte) (Byte.MAX_VALUE  * volume / 100);
+	}
+	
+	public byte[] asAudioSample(int sampleRate) {
+        return manchesterEncode(asBooleanArray(), getBitExpansion(sampleRate));
+    }
+	
+	public boolean[] asBooleanArray() {
+	    boolean data[] = new boolean[80];
+        int index = 0;
+        index = buildBlock(data, index, frame, false, df, col);
+        index = buildBlock(data, index, sec, true, false, false);
+        index = buildBlock(data, index, min, true, false, false);
+        index = buildBlock(data, index, hour, false, sync, false);
+        addAll(data, index, reversed ? SYNC_WORD_REVERSED : SYNC_WORD);
+        data[framerate == Framerate.FRAMERATE_25 ? 59 : 27] = getPolarity(data);
+        return data;
+	}
 
 	/**
 	 * 
 	 * @return The packet, correctly <a href=
 	 *         "https://en.wikipedia.org/wiki/Linear_timecode#Longitudinal_timecode_data_format">
-	 *         formatted</a>, and encoded with <a href=
-	 *         "https://en.wikipedia.org/wiki/Differential_Manchester_encoding">
-	 *         differential manchester encoding</a>.
+	 *         formatted</a>.
 	 */
 	public byte[] asByteArray() {
-		boolean data[] = new boolean[80];
-		int index = 0;
-		index = buildBlock(data, index, frame, false, df, col);
-		index = buildBlock(data, index, sec, true, false, false);
-		index = buildBlock(data, index, min, true, false, false);
-		index = buildBlock(data, index, hour, false, sync, false);
-		addAll(data, index, reversed ? SYNC_WORD_REVERSED : SYNC_WORD);
-		data[framerate == Framerate.FRAMERATE_25 ? 59 : 27] = getPolarity(data);
-		return manchesterEncode(data);
+	    boolean[] data = asBooleanArray();
+		ByteBuilder builder = new ByteBuilder(data.length);
+		builder.add(data);
+		return builder.toByteArray();
 	}
 	/**
 	 * @return The packet, correctly <a href=
 	 *         "https://en.wikipedia.org/wiki/Linear_timecode#Longitudinal_timecode_data_format">
-	 *         formatted</a>, encoded with <a href=
-	 *         "https://en.wikipedia.org/wiki/Differential_Manchester_encoding">
-	 *         differential manchester encoding</a> and rappresented as a bitString.
+	 *         formatted</a>.
 	 */
-	public String asStringBits(){
-		byte[] data = asByteArray();
-		StringBuilder sb = new StringBuilder(data.length * 8);
-		for(byte b : data){
-			String s = Integer.toBinaryString(b);
-			sb.append(String.format("%8s", s.length() > 8 ? s.substring(s.length() - 8, s.length()) : s).replace(' ', '0'));
+	public String asBitString() {
+		boolean[] data = asBooleanArray();
+		StringBuilder sb = new StringBuilder(data.length);
+		for(boolean b : data){
+			sb.append(b ? "1" : "0");
 		}
 		return sb.toString();
+	}
+	
+	private int getBitExpansion(int sampleRate) {
+	    return (int) (sampleRate / (160 * framerate.getFps()));
 	}
 
 	private int buildBlock(boolean[] data, int index, int value, boolean longValue, boolean flag1, boolean flag2) {
@@ -132,6 +137,8 @@ public class LTCPacket {
 		index = addAll(data, index, USER_BIT_FIELD);
 		return index;
 	}
+	
+	
 	private static boolean getPolarity(boolean data[]){
 		int i = 0;
 		for(boolean v : data)
@@ -139,21 +146,31 @@ public class LTCPacket {
 				i++;
 		return i % 2 == 1;
 	}
+	
 
-	private static byte[] manchesterEncode(boolean value[]) {
-		ByteBuilder result = new ByteBuilder(value.length * 2);
+	private byte[] manchesterEncode(boolean value[], int repeatBytes) {
+		byte[] result = new byte[value.length * 2 * repeatBytes];
+		int index = 0;
 		for (boolean b : value) {
 			if (b) {
-				result.add(true);
-				result.add(false);
+				index = repeatBytes(result, index, volume, repeatBytes);
+				index = repeatBytes(result, index, (byte) -volume, repeatBytes);
 			} else {
-				result.add(false);
-				result.add(true);
+			    index = repeatBytes(result, index, (byte) -volume, repeatBytes);
+				index = repeatBytes(result, index, volume, repeatBytes);
 			}
 		}
-		return result.toByteArray();
+		return result;
+	}
+	
+	
+	private int repeatBytes(byte[] data, int index, byte value, int repeat) {
+	    for(int i = 0; i < repeat; i++)
+            data[index++] = value;
+        return index;
 	}
 
+	
 	private static int bcdSingle(boolean[] b, int index, int value) {
 		while (value > 0 && index < b.length) {
 			b[index++] = value % 2 == 1;

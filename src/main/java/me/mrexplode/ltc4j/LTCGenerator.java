@@ -13,6 +13,8 @@ public class LTCGenerator implements Runnable {
     private boolean synced = false;
     private boolean reversed = false;
     private Framerate framerate;
+    private int sampleRate;
+    private int volume;
     
     private int frame = 0;
     private int sec = 0;
@@ -24,9 +26,10 @@ public class LTCGenerator implements Runnable {
     private boolean running = true;
     private boolean playing = false;
     
-    public LTCGenerator(Mixer output, Framerate framerate) {
+    public LTCGenerator(Mixer output, Framerate framerate, int sampleRate) {
         this.framerate = framerate;
         this.mixer = output;
+        this.sampleRate = sampleRate;
     }
 
     @Override
@@ -35,8 +38,9 @@ public class LTCGenerator implements Runnable {
         
         dataLine.start();
         while (running) {
-            LTCPacket packet = new LTCPacket(hour, min, sec, frame, framerate, dropframe, colorframe, synced, reversed);
-            byte[] content = packet.asByteArray();
+            LTCPacket2 packet = new LTCPacket2(hour, min, sec, frame, framerate, dropframe, colorframe, synced, reversed);
+            packet.setVolumePercent(volume);
+            byte[] content = packet.asAudioSample(sampleRate);
             if (playing)
                 dataLine.write(content, 0, content.length);
         }
@@ -81,6 +85,16 @@ public class LTCGenerator implements Runnable {
         dataLine.stop();
         dataLine.close();
         mixer.close();
+    }
+    
+    /**
+     * Sets the volume for the output.
+     * @param value must be between 0 and 100
+     */
+    public void setVolume(int value) {
+        if (value > 100 || value < 0)
+            throw new IllegalArgumentException("Volume should be between 0 and 100");
+        this.volume = value;
     }
     
     /**

@@ -22,11 +22,20 @@ public class ByteBuilder {
 	
 	/**
 	 * Adds a bit to the final byte array
-	 * @param b	boolean rappresentation of the bit
+	 * @param b	boolean representation of the bit
 	 */
 	public void add(boolean b){
 		if(bitIndex++ == 8) flush();
 		currentValue = (short) (currentValue << 1 | (b ? 1 : 0));
+	}
+	
+	/**
+	 * Adds a boolean array to the final byte array
+	 * @param array
+	 */
+	public void add(boolean[] array) {
+	    for (boolean b : array)
+	        add(b);
 	}
 	
 	/**
