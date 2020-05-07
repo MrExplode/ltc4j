@@ -1,4 +1,4 @@
-# ![icon](https://mrexplode.github.io/resources/ltc4j/icon32.png) ltc4j [![Build Status](https://travis-ci.org/MrExplode/ltc4j.svg?branch=master)](https://travis-ci.org/MrExplode/ltc4j) [![Total alerts](https://img.shields.io/lgtm/alerts/g/MrExplode/ltc4j.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/MrExplode/ltc4j/alerts/) [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/MrExplode/ltc4j.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/MrExplode/ltc4j/context:java)
+# ![icon](https://mrexplode.github.io/resources/ltc4j/icon32.png) ltc4j [![Build Status](https://travis-ci.org/MrExplode/ltc4j.svg?branch=master)](https://travis-ci.org/MrExplode/ltc4j) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/eec878baab46402d96b59aa8cd3845ba)](https://www.codacy.com/manual/pjanos/ltc4j?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrExplode/ltc4j&amp;utm_campaign=Badge_Grade)
 
 SMPTE LTC signal generator for Java
 
@@ -6,7 +6,10 @@ SMPTE LTC signal generator for Java
 
 This library focuses on generating ltc signals. This implies that you have to handle the timing, but also this makes slowing and accerlating time possible.
 
-If you want a complete library for sending various types of timecode, check out [this](https://github.com/stranck/JavaTimecode), made by [@stranck](https://github.com/stranck)
+### Related libraries / programs
+-   [artnet4j](https://github.com/cansik/artnet4j) - working with ArtNet on Java
+-   [Timecode](https://github.com/MrExplode/Timecode) - send ArtNet, LTC and MTC (planned) timecode, dispatch OSC commands, scheduled music player
+-   [JavaTimecode](https://github.com/stranck/JavaTimecode) - timecode library, in Java, work in progress
 ## Usage
  Framerates:
 -   `Framerate.FRAMERATE_24`
