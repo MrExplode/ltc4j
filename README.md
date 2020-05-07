@@ -1,4 +1,4 @@
-# ![icon](https://mrexplode.github.io/resources/ltc4j/icon32.png) ltc4j [![Build Status](https://travis-ci.org/MrExplode/ltc4j.svg?branch=master)](https://travis-ci.org/MrExplode/ltc4j) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/eec878baab46402d96b59aa8cd3845ba)](https://www.codacy.com/manual/pjanos/ltc4j?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrExplode/ltc4j&amp;utm_campaign=Badge_Grade)
+# ![icon](https://mrexplode.github.io/resources/ltc4j/icon32.png) ltc4j [![Build Status](https://travis-ci.org/MrExplode/ltc4j.svg?branch=master)](https://travis-ci.org/MrExplode/ltc4j) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/eec878baab46402d96b59aa8cd3845ba)](https://www.codacy.com/manual/MrExplode/ltc4j?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrExplode/ltc4j&amp;utm_campaign=Badge_Grade)
 
 SMPTE LTC signal generator for Java
 
