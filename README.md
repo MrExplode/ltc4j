@@ -9,10 +9,10 @@ This library focuses on generating ltc signals. This implies that you have to ha
 If you want a complete library for sending various types of timecode, check out [this](https://github.com/stranck/JavaTimecode), made by [@stranck](https://github.com/stranck)
 ## Usage
  Framerates:
-- `Framerate.FRAMERATE_24`
-- `Framerate.FRAMERATE_25`
-- `Framerate.FRAMERATE_DROPFRAME`
-- `Framerate.FRAMERATE_30`
+-   `Framerate.FRAMERATE_24`
+-   `Framerate.FRAMERATE_25`
+-   `Framerate.FRAMERATE_DROPFRAME`
+-   `Framerate.FRAMERATE_30`
 
 **An example of the** `LTCGenerator` **class**
 ```java

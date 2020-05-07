@@ -10,10 +10,14 @@ public class LTCPacket {
     
     private final boolean[] SYNC_WORD = convertBitString("0011111111111101");
     
-    private int hour, min, sec, frame;
+    private int hour;
+    private int min;
+    private int sec;
+    private int frame;
     private Framerate framerate;
     private final boolean[][] userbits = new boolean[8][];
-    private boolean bgf0, bgf2;
+    private boolean bgf0;
+    private boolean bgf2;
     private boolean reversed;
     private boolean df;
     private boolean sync;
@@ -62,25 +66,26 @@ public class LTCPacket {
             userbits[i] = new boolean[4];
     }
     
-    private int buildBlock(boolean[] data, int index, int value, boolean longValue, boolean flag1, boolean flag2, boolean[] userBits1, boolean[] userBits2) {
+    private static int buildBlock(boolean[] data, final int index, int value, boolean longValue, boolean flag1, boolean flag2, boolean[] userBits1, boolean[] userBits2) {
+        int index2 = index;
         int optionalBit = longValue ? 1 : 0;
         boolean[] bcd = bcd(value, 6 + optionalBit);
         //First 4 bits of value
         for(int i = 0; i < 4; i++)
-            data[index++] = bcd[i];
+            data[index2++] = bcd[i];
         //user bits
-        index = addAllBits(data, index, userBits1);
+        index2 = addAllBits(data, index2, userBits1);
         //Second 2/3 bits of value
         for(int i = 0; i < 2 + optionalBit; i++)
-            data[index++] = bcd[4 + i];
+            data[index2++] = bcd[4 + i];
         //First flag
-        data[index++] = flag1;
+        data[index2++] = flag1;
         //If we're working with just 6 bits, add the second flag
         if(!longValue)
-            data[index++] = flag2;
+            data[index2++] = flag2;
         //User bits again
-        index = addAllBits(data, index, userBits2);
-        return index;
+        index2 = addAllBits(data, index2, userBits2);
+        return index2;
     }
     
     /**
@@ -239,18 +244,21 @@ public class LTCPacket {
     ////////////////////////////
     
     
-    private static int repeatBytes(byte data[], int index, byte value, int repeatBytes){
+    private static int repeatBytes(byte data[], final int index, byte value, int repeatBytes){
+        int index2 = index;
         for(int i = 0; i < repeatBytes; i++)
-            data[index++] = value;
-        return index;
+            data[index2++] = value;
+        return index2;
     }
     
-    private static int bcdSingle(boolean[] b, int index, int value) {
-        while (value > 0 && index < b.length) {
-            b[index++] = value % 2 == 1;
-            value /= 2;
+    private static int bcdSingle(boolean[] b, final int index, final int value) {
+        int index2 = index;
+        int value2 = value;
+        while (value > 0 && index2 < b.length) {
+            b[index2++] = value2 % 2 == 1;
+            value2 /= 2;
         }
-        return index;
+        return index2;
     }
     
     private static boolean[] bcd(int value, int numBits) {
@@ -260,9 +268,10 @@ public class LTCPacket {
         return result;
     }
     
-    private static int addAllBits(boolean[] dst, int index, boolean[] src) {
+    private static int addAllBits(boolean[] dst, final int index, boolean[] src) {
+        int index2 = index;
         for (int i = 0; i < src.length; i++)
-            dst[index++] = src[i];
+            dst[index2++] = src[i];
         return index;
     }
     
