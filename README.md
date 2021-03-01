@@ -8,7 +8,7 @@ This library focuses on generating ltc signals. This implies that you have to ha
 
 ### Related libraries / programs
 -   [artnet4j](https://github.com/cansik/artnet4j) - working with ArtNet on Java
--   [Timecode](https://github.com/MrExplode/Timecode) - send ArtNet, LTC and MTC (planned) timecode, dispatch OSC commands, scheduled music player
+-   [ShowManager](https://github.com/MrExplode/Timecode) - send ArtNet, LTC and MTC (planned) timecode, dispatch OSC commands, scheduled music player
 -   [JavaTimecode](https://github.com/stranck/JavaTimecode) - timecode library, in Java, work in progress
 ## Usage
  Framerates:
