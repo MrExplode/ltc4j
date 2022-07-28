@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+    id 'io.freefair.lombok' version '6.4.3'
+}
+
+group 'me.sunstorm'
+version '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier('sources')
+    baseName(rootProject.name)
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier('javadoc')
+    baseName(rootProject.name)
+    (javadoc.options as CoreJavadocOptions).addStringOption('Xdoclint:none','-quiet')
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

@@ -1,4 +1,4 @@
-# ![icon](https://mrexplode.github.io/resources/ltc4j/icon32.png) ltc4j [![Build Status](https://travis-ci.org/MrExplode/ltc4j.svg?branch=master)](https://travis-ci.org/MrExplode/ltc4j) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/eec878baab46402d96b59aa8cd3845ba)](https://www.codacy.com/manual/MrExplode/ltc4j?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrExplode/ltc4j&amp;utm_campaign=Badge_Grade)
+# ltc4j [![Build Status](https://github.com/MrExplode/ShowManager/actions/workflows/build.yml/badge.svg)](https://github.com/MrExplode/ltc4j/actions)
 
 SMPTE LTC signal generator for Java
 
@@ -11,7 +11,7 @@ This library focuses on generating ltc signals. This implies that you have to ha
 -   [ShowManager](https://github.com/MrExplode/Timecode) - send ArtNet, LTC and MTC (planned) timecode, dispatch OSC commands, scheduled music player
 -   [JavaTimecode](https://github.com/stranck/JavaTimecode) - timecode library, in Java, work in progress
 ## Usage
- Framerates:
+Framerates:
 -   `Framerate.FRAMERATE_24`
 -   `Framerate.FRAMERATE_25`
 -   `Framerate.FRAMERATE_DROPFRAME`
