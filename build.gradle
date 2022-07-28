@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'io.freefair.lombok' version '6.4.3'
+    id 'maven-publish'
 }
 
 group 'me.sunstorm'
@@ -10,6 +11,8 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
     }
+    withJavadocJar()
+    withSourcesJar()
 }
 
 repositories {
@@ -25,20 +28,15 @@ test {
     useJUnitPlatform()
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier('sources')
-    baseName(rootProject.name)
-    from sourceSets.main.allSource
-}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier('javadoc')
-    baseName(rootProject.name)
-    (javadoc.options as CoreJavadocOptions).addStringOption('Xdoclint:none','-quiet')
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+            pom {
+                name = 'ltc4j'
+                description = 'SMPTE LTC signal generator for Java'
+            }
+        }
+    }
 }
