@@ -71,6 +71,7 @@ public class LTCGenerator implements Runnable {
     private boolean playing = false;
     private SourceDataLine dataLine;
     private int volume;
+    private final LTCPacket packet = new LTCPacket();
 
     public LTCGenerator(Mixer output, Framerate frameRate, int sampleRate) {
         this.frameRate = frameRate;
@@ -83,7 +84,7 @@ public class LTCGenerator implements Runnable {
         dataLine.start();
         while (running) {
             if (playing) {
-                LTCPacket packet = new LTCPacket(hour, min, sec, frame, frameRate, dropFrame, colorFrame, synced, reversed);
+                packet.set(hour, min, sec, frame, frameRate, dropFrame, colorFrame, synced, reversed);
                 packet.setVolumePercent(volume);
                 byte[] content = packet.asAudioSample(sampleRate);
                 dataLine.write(content, 0, content.length);

@@ -1,11 +1,14 @@
 package me.sunstorm.ltc4j;
 
+import lombok.NoArgsConstructor;
+
 /**
  * This class represents one packet of LTC data.
  *
  * @author <a href="https://www.stranck.ovh">Stranck</a> and <a href="https://sunstorm.rocks">SunStorm</a>
  *
  */
+@NoArgsConstructor
 public class LTCPacket {
 
     private final boolean[] SYNC_WORD = convertBitString("0011111111111101");
@@ -53,6 +56,10 @@ public class LTCPacket {
      * @param reversed should be true when you are playing timecode backwards
      */
     public LTCPacket(int hour, int min, int sec, int frame, Framerate framerate, boolean df, boolean col, boolean sync, boolean reversed) {
+        set(hour, min, sec, frame, framerate, df, col, sync, reversed);
+    }
+
+    public void set(int hour, int min, int sec, int frame, Framerate framerate, boolean df, boolean col, boolean sync, boolean reversed) {
         this.hour = hour;
         this.min = min;
         this.sec = sec;
