@@ -1,4 +1,4 @@
-# ltc4j [![Build Status](https://github.com/MrExplode/ShowManager/actions/workflows/build.yml/badge.svg)](https://github.com/MrExplode/ltc4j/actions)
+# ltc4j [![Build Status](https://github.com/MrExplode/ltc4j/actions/workflows/build.yml/badge.svg)](https://github.com/MrExplode/ltc4j/actions)
 
 SMPTE LTC signal generator for Java
 
