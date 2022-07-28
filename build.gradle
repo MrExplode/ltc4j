@@ -11,21 +11,28 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
     }
-    withJavadocJar()
-    withSourcesJar()
 }
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier('sources')
+    baseName(rootProject.name)
+    from sourceSets.main.allSource
 }
 
-test {
-    useJUnitPlatform()
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier('javadoc')
+    baseName(rootProject.name)
+    (javadoc.options as CoreJavadocOptions).addStringOption('Xdoclint:none','-quiet')
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 
 publishing {
