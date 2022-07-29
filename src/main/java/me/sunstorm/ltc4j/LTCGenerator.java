@@ -119,6 +119,9 @@ public class LTCGenerator implements Runnable {
         SourceDataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         dataLine = (SourceDataLine) mixer.getLine(info);
         dataLine.open();
+        FloatControl control = (FloatControl) dataLine.getControl(FloatControl.Type.MASTER_GAIN);
+        control.setValue(20f * (float) Math.log10(0.85f));
+        System.out.println("start");
         Thread thread = new Thread(this);
         thread.start();
     }
